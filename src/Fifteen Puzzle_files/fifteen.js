@@ -11,6 +11,7 @@ function placeElements()
 	for (var i = 0; i < puzzlepieces.length; i++) {
 		puzzlepieces[i].className = "puzzlepiece";
 		setPositionOfSinglePiece(puzzlepieces[i], i);
+		setBackgroundForSinglePiece(puzzlepieces[i], i);
 	}
 }
 
@@ -26,4 +27,14 @@ function setPositionOfSinglePiece(piece, index)
     var fromTheLeftEdge = y * (400 / size);
     piece.style.top = fromTheTopEdge + "px";
     piece.style.left = fromTheLeftEdge + "px";
+}
+
+//Set background images of the pieces
+function setBackgroundForSinglePiece(piece, index)
+{
+	var x = Math.floor(index / size);
+	var y = index % size;
+    var fromTheRightEdge = 400 - x * (400 / size);
+    var fromTheBottomEdge = 400 - y * (400 / size);
+    piece.style.backgroundPosition = fromTheLeftEdge + "px " + fromTheTopEdge + "px";
 }
