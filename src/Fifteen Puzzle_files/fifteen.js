@@ -12,15 +12,18 @@ function placeElements()
 	for (var i = 0; i < puzzlepieces.length; i++) {
 		puzzlepieces[i].className = "puzzlepiece";
 		puzzlepieces[i].id = i;
+		numberOn_Piece[i] = i + 1;
 		setPositionOfSinglePiece(puzzlepieces[i], i);
 		setBackgroundForSinglePiece(puzzlepieces[i], i);
+		//Event Handling
 		puzzlepieces[i].addEventListener('click', movePiece);
-		numberOn_Piece[i] = i + 1;
+		puzzlepieces[i].onmouseover = highlightPiece;
+		puzzlepieces[i].onmouseout = dehighlightPiece;
 	}
 	numberOn_Piece[puzzlepieces.length] = 0;
 }
 
-//Place a singl
+//Place a single piece into right position
 var size = 4;
 function setPositionOfSinglePiece(piece, index)
 {
@@ -105,8 +108,26 @@ function canMoveTo(index)
 	return -1;
 }
 
+//Caller: movePiece
 function stepMoveTo(piece, x, y)
 {
 	piece.style.top = x + "px";
 	piece.style.left = y + "px";
+}
+
+//Highlight and dehighlight pieces
+function highlightPiece(event)
+{
+	if (canMoveTo(parseInt(this.id)) != -1) {
+		this.style.borderColor = "red";
+		this.style.color = "#006600";
+		this.style.textDecoration = "underline";
+	}
+}
+
+function dehighlightPiece(event)
+{
+	this.style.borderColor = "black";
+    this.style.color = "black";
+    this.style.textDecoration = "";
 }
