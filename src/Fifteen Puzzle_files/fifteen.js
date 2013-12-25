@@ -1,5 +1,6 @@
 window.onload = function()
 {
+	$("shufflebutton").onclick = shuffle;
 	placeElements();
 };
 
@@ -16,7 +17,7 @@ function placeElements()
 		setPositionOfSinglePiece(puzzlepieces[i], i);
 		setBackgroundForSinglePiece(puzzlepieces[i], i);
 		//Event Handling
-		puzzlepieces[i].addEventListener('click', movePiece);
+		puzzlepieces[i].addEventListener('click', movePieceEvent);
 		puzzlepieces[i].onmouseover = highlightPiece;
 		puzzlepieces[i].onmouseout = dehighlightPiece;
 	}
@@ -48,35 +49,39 @@ function setBackgroundForSinglePiece(piece, index)
 }
 
 //Move Pieces
-function movePiece(event)
+function movePieceEvent(event)
 {
 	var index = parseInt(this.id);
 	var dest = canMoveTo(index);
 	if (dest != -1) {
-		//Calculation
-		var fromX = Math.floor(index / size) * (400 / size);
-		var fromY = (index % size) * (400 / size);
-		var destX = Math.floor(dest / size) * (400 / size);
-		var destY = (dest % size) * (400 / size);
-		var interval = 10;
-
-		//Begin moving
-		var i = 0;
-		if (fromX == destX) {
-			for (i = 1; i <= 100 / interval; i++)
-				setTimeout(stepMoveTo, i * interval, this, fromX, fromY + (destY-fromY)/(100/interval) * i);
-		}
-		else {
-			for (i = 1; i <= 100 / interval; i++)
-				setTimeout(stepMoveTo, i * interval, this, fromX + (destX-fromX)/(100/interval) * i, fromY);
-		}
-		//Finish moving
-
+		movePieceFromTo(this, index, dest);
 		//Reset the numberOn_Piece[i]
 		numberOn_Piece[dest] = numberOn_Piece[index];
 		numberOn_Piece[index] = 0;
 		this.id = dest;
 	}
+}
+
+function movePieceFromTo(piece, index, dest)
+{
+	//Calculation
+	var fromX = Math.floor(index / size) * (400 / size);
+	var fromY = (index % size) * (400 / size);
+	var destX = Math.floor(dest / size) * (400 / size);
+	var destY = (dest % size) * (400 / size);
+	var interval = 10;
+
+	//Begin moving
+	var i = 0;
+	if (fromX == destX) {
+		for (i = 1; i <= 100 / interval; i++)
+			setTimeout(stepMoveTo, i * interval, piece, fromX, fromY + (destY-fromY)/(100/interval) * i);
+	}
+	else {
+		for (i = 1; i <= 100 / interval; i++)
+			setTimeout(stepMoveTo, i * interval, piece, fromX + (destX-fromX)/(100/interval) * i, fromY);
+	}
+	//Finish moving
 }
 
 //Caller: movePiece
@@ -130,4 +135,29 @@ function dehighlightPiece(event)
 	this.style.borderColor = "black";
     this.style.color = "black";
     this.style.textDecoration = "";
+}
+
+// Shuffle the pieces
+function shuffle(event)
+{
+	var puzzlepieces = $$("#puzzlearea div");
+	//use 20 steps to mess up the puzzle
+	for (var step = 0; step < 200; step++) {
+		list = [];
+		//select the movable pieces
+		for (var i = 0; i < puzzlepieces.length; i++) {
+			var tempIndex = parseInt(puzzlepieces[i].id);
+			if (canMoveTo(tempIndex) != -1)
+				list.push(puzzlepieces[i]);
+		}
+		var piece = list[Math.floor(Math.random() * list.length)];
+		var index = parseInt(piece.id);
+		var dest = canMoveTo(index);
+		movePieceFromTo(piece, index, dest);
+		numberOn_Piece[dest] = numberOn_Piece[index];
+		numberOn_Piece[index] = 0;
+		piece.id = dest;
+		list = [];
+	}
+	
 }
