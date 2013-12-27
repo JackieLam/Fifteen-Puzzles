@@ -60,6 +60,24 @@ function movePieceEvent(event)
 		numberOn_Piece[index] = 0;
 		this.id = dest;
 	}
+
+	//Judge whether it is a successful status
+	//If success, change the background image of the body
+	var puzzlepieces = $$("#puzzlearea div");
+	var correctCount = 0;
+	for (var i = 0; i < puzzlepieces.length; i++) {
+		if (numberOn_Piece[i] == i + 1)
+			correctCount++;
+	}
+	if (numberOn_Piece[puzzlepieces.length] == 0)
+		correctCount++;
+	if (correctCount == 16) {
+		// alert("OH YEAH YOU ARE SUCCESSFUL!");
+		$$('body')[0].setStyle({backgroundColor:'#900'});
+	}
+	else {
+		$$('body')[0].setStyle({backgroundColor:'white'});
+	}
 }
 
 function movePieceFromTo(piece, index, dest)
@@ -102,7 +120,7 @@ function canMoveTo(index)
 		if (numberOn_Piece[right] == 0 && index % size != 3) {
 			return right;
 		}
-	if (up >= 0 && right < 16)
+	if (up >= 0 && up < 16)
 		if (numberOn_Piece[up] == 0 && Math.floor(index / size) != 0) {
 			return up;
 		}
